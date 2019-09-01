@@ -1,12 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import { render } from "react-dom";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import "semantic-ui-css/semantic.min.css";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+
+//import GameCard from "./components/GameCard";
+//import GamesList from "./components/GamesList.js";
+import App from "./components/app.js";
+//render(<GameCard/>, document.getElementById("root"));
+
+//render(<GameCard game={games[1]} />, document.getElementById("root"));
+//render(<GamesList games={games} />, document.getElementById("root"));
+render(<App />, document.getElementById("root"));
