@@ -2,7 +2,7 @@ import React from 'react';
 import GamesList from "./GamesList";
 import  _orderBy from "lodash/orderBy"; // me permite ordenar con base a 2 o mas caracteristicas 
 //imporT _sortBy from "lodash/sortBy"; //esto me permite ordenar con base a una característica
-
+import GameForm from "./GameForm";
 
 
 const games = [
@@ -15,6 +15,7 @@ const games = [
 		players:"2-4",
 		duration: 60
 	},
+
 	{
 		_id:2,
 		feature: false,
@@ -39,13 +40,15 @@ const games = [
  
 
  class App extends React.Component{
-	 /*
+	/*
 	constructor(props){
 		super(props);
-		state= {
+		this.state= {
 			games:[]
 		};
-	};
+
+		this.toggleFeatured = this.toggleFeatured.bind(this);
+	}; // primera forma de bind una función  dentro del constructor y con bind
 	*/
 
  	state={
@@ -53,18 +56,29 @@ const games = [
  	};
 
  	componentDidMount(){
-		this.setState({games: _orderBy(games, ["feature", "name"], ["desc", "asc"])
-	});
+		this.setState({games:this.sortgames(games)
+		});
 	} //este metodo se llama despues que la pagina ya se haya renderizado la primera vez
 	
-	toggleFeatured(gameID){
-		alert(gameID);
+	sortgames(games){
+		return  _orderBy(games, ["feature", "name"], ["desc", "asc"]);
 	}
+
+	toggleFeatured = gameID => {
+		console.log(this);
+		const newgames = this.state.games.map(game => {
+			if(game._id === gameID) return {...game, feature: !game.feature};
+			return game;
+		});
+		this.setState ({games: this.sortgames(newgames)});
+	}// segunda forma de bind una función es convirtiendola en una arrow function
 
 
  	render(){
  		return (
- 			<div className="ui container">
+			 <div className="ui container">
+				 <GameForm />
+				 <br />
 				<GamesList 
 				games={this.state.games}
 				toggleFeatured={this.toggleFeatured}
