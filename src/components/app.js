@@ -4,10 +4,22 @@ import  _orderBy from "lodash/orderBy"; // me permite ordenar con base a 2 o mas
 //imporT _sortBy from "lodash/sortBy"; //esto me permite ordenar con base a una característica
 import GameForm from "./GameForm";
 
+const publisher = [
+	{
+		_id: 1,
+		name:" every now and then i fall apart"
+	},
+	{
+		_id:2,
+		name: "once upon a time"
+	}
+]
+
 
 const games = [
 	{
 		_id:1,
+		publisher:2,
 		feature: true,
 		price:32.99,
 		thumbnail:"https://img.depor.com/files/listing_ec_flujo_xx/uploads/2018/10/26/5bd3e730ed55d.jpeg",
@@ -18,6 +30,7 @@ const games = [
 
 	{
 		_id:2,
+		publisher:2,
 		feature: false,
 		price: 300.99,
 		thumbnail:"https://images-na.ssl-images-amazon.com/images/I/91BpIH3u1YL._SX569_.jpg",
@@ -27,6 +40,7 @@ const games = [
 	 },
 	 {
 		_id:3,
+		publisher:1,
 		feature: true,
 		price: 67.99,
 		thumbnail: "https://d3fa68hw0m2vcc.cloudfront.net/25e/214062638.jpeg",
@@ -77,7 +91,7 @@ const games = [
  	render(){
  		return (
 			 <div className="ui container">
-				 <GameForm />
+				 <GameForm publishers={publisher}/>
 				 <br />
 				<GamesList 
 				games={this.state.games}
