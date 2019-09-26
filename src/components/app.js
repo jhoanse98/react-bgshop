@@ -3,6 +3,7 @@ import GamesList from "./GamesList";
 import  _orderBy from "lodash/orderBy"; // me permite ordenar con base a 2 o mas caracteristicas 
 //imporT _sortBy from "lodash/sortBy"; //esto me permite ordenar con base a una característica
 import GameForm from "./GameForm";
+import TopNavigation from "./TopNavigation";
 
 const publisher = [
 	{
@@ -66,7 +67,9 @@ const games = [
 	*/
 
  	state={
- 		games:[]
+		 games:[],
+		 showGameForm: false
+		
  	};
 
  	componentDidMount(){
@@ -87,16 +90,30 @@ const games = [
 		this.setState ({games: this.sortgames(newgames)});
 	}// segunda forma de bind una función es convirtiendola en una arrow function
 
+	ShowGameForm = () => this.setState({showGameForm: true});
+	hideGameForm =() => this.setState({showGameForm: false});
 
  	render(){
+		const numberOfColumns = this.state.showGameForm ? "ten" : "sixteen"
  		return (
 			 <div className="ui container">
-				 <GameForm publishers={publisher}/>
-				 <br />
-				<GamesList 
-				games={this.state.games}
-				toggleFeatured={this.toggleFeatured}
-				/>
+			 	<TopNavigation ShowGameForm={this.ShowGameForm} />
+
+				<div className="ui stackable grid">
+					{this.state.showGameForm && (
+						<div className="six wide column">
+							<GameForm publishers={publisher} cancel={this.hideGameForm}/>
+						</div>
+					)}
+					<div className={`${numberOfColumns} wide column`}>
+						<GamesList 
+						games={this.state.games}
+						toggleFeatured={this.toggleFeatured}
+					/>
+					</div>
+				</div>	
+				
+				<br />
 			</div>
  		)
  	}
