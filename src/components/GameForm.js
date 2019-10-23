@@ -16,28 +16,61 @@ const genres=[
 ];
 */
 
+const initialData = {
+    _id:null,
+    name: "",
+    description: "",
+    price: 0,
+    duration: 0,
+    players: "",
+    feature: false,
+    thumbnail:""
+}
+
 class GameForm extends Component {
     state={
-        data: {
-            name: "",
-            description: "",
-            price: 0,
-            duration: 0,
-            players: "",
-            feature: false,
-            //tags: [],
-            //genre: 1,
-            publisher:0,
-            thumbnail:""
-        },
-        errors:{
-            name: "this field can't be blank "
+        data:initialData,
+        errors:{} 
+    } 
+
+    componentDidMount(){
+        if(this.props.game._id){
+            this.setState({data: this.props.game});
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps.game._id && nextProps.game._id != this.state.data._id){
+            this.setState({data: nextProps.game});
         } 
-    }  
+
+        if(!nextProps.game._id){
+            this.setState({data: initialData});
+        }
+    }
+
+    validate(data){
+        const errors= {};
+        
+        if (!data.name) errors.name=  "this field can´t be blank";
+        if (!data.players) errors.players=  "this field can´t be blank";
+        if (!data.thumbnail) errors.thumbnail=  "this field can´t be blank";
+        if (data.price <= 0) errors.price=  "too cheap, don´t you think?";
+        if (data.duration <= 0) errors.duration=  "this is so short";
+
+        return errors;
+    } 
+
 
     handleSubmit = e => {
         e.preventDefault();
-        console.log(this.state.data); 
+        const errors = this.validate(this.state.data);
+        this.setState({errors});
+
+        if(Object.keys(errors).length === 0){
+            this.props.submits(this.state.data);
+            console.log(this.state.data);
+        }
     };
 /*
     handlechange = e => this.setState({
@@ -48,7 +81,13 @@ class GameForm extends Component {
 */
 
     handleStringchange = e => this.setState({data: {...this.state.data, [e.target.name]: e.target.value}});
-    handleNumberchange = e => this.setState({data: {...this.state.data, [e.target.name]: parseInt(e.target.value,10)}});
+    handleNumberchange = e =>
+     this.setState({
+         data:{
+            ...this.state.data,
+            [e.target.name]: parseInt(e.target.value,10)
+        }
+    });
     handleCheckboxchange = e => this.setState({data: {...this.state.data, [e.target.name]: e.target.checked}});
     
     /*
@@ -62,6 +101,7 @@ class GameForm extends Component {
 
     render(){
         const {data, errors} = this.state;
+        console.log(data.publisher);  
         return(
             //form.ui.form>.field>label+input
             <form className="ui form" onSubmit={this.handleSubmit}>
@@ -140,7 +180,7 @@ class GameForm extends Component {
                         />
                         <FormInlineMessage content={errors.duration} type="error" />
                     </div>
-
+-
                     <div className={errors.players ? "field error" : "field"}>
                         <label htmlFor="players">Players</label>
                         <input 
@@ -165,21 +205,7 @@ class GameForm extends Component {
                     <label htmlFor="feature">feature?</label>
                 </div>
                 
-
-                <div className={errors.publishers ? "field error" : "field"}>
-                    <label>publishers</label>
-                    <select
-                        name="publisher"
-                        value={data.publisher}
-                        onChange={this.handleNumberChange}
-                    >
-                        <option value="0">choose publisher</option>
-                        {this.props.publishers.map(publisher=>(
-                            <option value={publisher._id} key={publisher._id}>{publisher.name}</option>
-                        ))}
-                    </select>
-                    <FormInlineMessage content={errors.publishers} type="error" />
-                </div>
+                
                 <div className="ui fluid buttons">
                     <button className="ui primary button" type="submit">
                         Create
@@ -196,11 +222,22 @@ class GameForm extends Component {
 }
 
 GameForm.propTypes = {
-    publishers: PropTypes.arrayOf(PropTypes.shape({
-        _id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-    })).isRequired,
+    publishers: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+    })
+    ).isRequired,
     cancel: PropTypes.func.isRequired,
+    submits: PropTypes.func.isRequired,
+    game: PropTypes.shape({
+        name: PropTypes.string,
+		thumbnail: PropTypes.string,
+		players: PropTypes.string,
+		duration: PropTypes.number,
+		price: PropTypes.number,
+		feature: PropTypes.bool
+    }).isRequired,
 };
 
 GameForm.defaultProps ={

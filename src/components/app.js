@@ -68,7 +68,8 @@ const games = [
 
  	state={
 		 games:[],
-		 showGameForm: false
+		 showGameForm: false,
+		 selectGame: {}
 		
  	};
 
@@ -90,8 +91,33 @@ const games = [
 		this.setState ({games: this.sortgames(newgames)});
 	}// segunda forma de bind una función es convirtiendola en una arrow function
 
-	ShowGameForm = () => this.setState({showGameForm: true});
-	hideGameForm =() => this.setState({showGameForm: false});
+	ShowGameForm = () => this.setState({showGameForm: true, selectGame: {}});
+	hideGameForm =() => this.setState({showGameForm: false, selectGame: {} });
+	selectgameforediting = game => this.setState({selectGame: game, showGameForm:true})
+
+	SaveGame = game => game._id ? this.UpdateGame(game): this.AddGame(game);
+
+	AddGame = game => 
+		this.setState({
+			games: this.sortgames([
+				...this.state.games,
+				{
+					...game,
+					_id: this.state.games.length+1
+				}
+			]),
+			
+			showGameForm: false 
+		});
+	
+	UpdateGame = game => this.setState({
+		games: this.sortgames(this.state.games.map(item => item._id === game._id ? game : item)),
+		showGameForm: false
+	})
+
+	deleteGame = game => this.setState ({
+		games: this.state.games.filter(item => item._id !== game._id)
+	})
 
  	render(){
 		const numberOfColumns = this.state.showGameForm ? "ten" : "sixteen"
@@ -102,13 +128,18 @@ const games = [
 				<div className="ui stackable grid">
 					{this.state.showGameForm && (
 						<div className="six wide column">
-							<GameForm publishers={publisher} cancel={this.hideGameForm}/>
+							<GameForm publishers={publisher} cancel={this.hideGameForm}
+							submits={this.SaveGame}
+							game={this.state.selectGame}
+							/>
 						</div>
 					)}
 					<div className={`${numberOfColumns} wide column`}>
 						<GamesList 
 						games={this.state.games}
 						toggleFeatured={this.toggleFeatured}
+						editGame={this.selectgameforediting}
+						deleteGame={this.deleteGame}
 					/>
 					</div>
 				</div>	
